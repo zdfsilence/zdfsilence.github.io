@@ -14,8 +14,10 @@
         .tile{width:10rem;height:10rem;box-sizing:border-box;border:.1rem solid #f93;display:inline-block;text-align: center;font-size:7rem;}
         .tile.empty{visibility: hidden;}
         .tile-move {transition: transform .3s cubic-bezier(.55,0,.1,1);}
+
         .bar{text-align: center;}
-        .bar_btn{font-size:1.6rem;width:6rem;}
+        .bar_btn{font-size:1.6rem;width:9rem;}
+        .step{font-size:1.4rem;margin-bottom:1rem;}
         [v-cloak]{display: none;}
     </style>
 </head>
@@ -25,8 +27,11 @@
             <div class="tile" v-for="item in puzzles" :class="item==0?'empty':''" @click="moveTile(item)" transition="tile">{{item}}</div>
         </div>
         <div class="bar">
-            <button class="bar_btn" @click="create">create</button>
-            <button class="bar_btn" @click="solve">solve</button>
+            <div class="step">还原这个拼图只需要移动方块<b>{{count}}</b>次哦！！</div>
+            <div class="step">已经移动<b>{{score}}</b>次了</div>
+            <button class="bar_btn" @click="create">新建拼图</button>
+            <button class="bar_btn" @click="reset">重新开始</button>
+            <button class="bar_btn" @click="solve">自动演示</button>
         </div>
     </div>
 

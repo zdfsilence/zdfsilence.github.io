@@ -7,9 +7,7 @@ function Node(value, state, emptyRow, emptyCol, depth) {
    this.strRepresentation = ""
    this.path = ""
 
-   // String representation of the state in CSV format
    for (var i = 0; i < state.length; i++){
-      // We assume the state is a square
       if (state[i].length != state.length) {
          alert('Number of rows differs from number of columns')
          return false
@@ -37,13 +35,10 @@ function AStar(initial, goal, empty) {
 }
 
 AStar.prototype.execute = function () {
-	// Add current state to visited list
 	this.visited.add(this.initial.strRepresentation)
 
 	while (this.queue.length > 0) {
 		var current = this.queue.dequeue()
-		//console.log(current.strRepresentation)
-		//console.log(this.queue.length)
 		if (current.strRepresentation == this.goal.strRepresentation) 
 			return current
 		this.expandNode(current)
@@ -129,16 +124,6 @@ Array.prototype.clone = function() {
 
 AStar.prototype.heuristic = function (node) {
 
-	// var result = 0;
-
-	// for (var i = 0; i < node.state.length; i++)	{
-	// 	for (var j = 0; j < node.state[i].length; j++)
-	// 	if (node.state[i][j] != this.goal.state[i][j] && node.state[i][j] != this.empty)
-	// 	result++;
-	// }
-         
- //   return result;
-
 	return this.manhattanDistance(node);
 }
 
@@ -163,23 +148,3 @@ AStar.prototype.manhattanDistance = function (node) {
    }
    return result
 }
-/*function start() {
-   var init = new Node(0, [[6,4,7],[8,5,0],[3,2,1]], 1, 2, 0)
-   // var init = new Node(0, [[1,2,3],[4,5,6],[8,7,0]], 2, 2, 0)
-   var goal = new Node(0, [[1,2,3],[4,5,6],[7,8,0]], 2, 2, 0)
-
-   var astar = new AStar(init, goal, 0)
-   // To measure time taken by the algorithm
-   var startTime = new Date()
-   // Execute AStar
-   var result = astar.execute()
-   // To measure time taken by the algorithm
-   var endTime = new Date()
-   alert('Completed in: ' + (endTime - startTime) + ' milliseconds')
-
-   console.dir(result)
-   // var panel = document.getElementById('panel')
-   // panel.innerHTML = 'Solution: ' + result.path + ' Total steps: ' + result.path.length + ''
-   // solution = result.path
-}
-*/

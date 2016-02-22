@@ -30,7 +30,7 @@ function exchangeTile(curr, goal, side, oldCoor, newCoor){
 	curr.$set(target, tmp);
 	if(curr.join('') == goal.join('')){
 		window.setTimeout(function(){
-			alert('恭喜你完成了拼图！');
+			alert('拼图已完成！');
 		},300);
 	}
 }
@@ -54,6 +54,7 @@ function moveTile(me, path, el){
 	if(dire==='R'){
 		newCoor[1]++
 	}
+	me.score++;
 	el.addEventListener("webkitTransitionEnd", function(){
 		console.log(1);
 		moveTile(me, path, el);
@@ -70,9 +71,13 @@ function moveTile(me, path, el){
 var app = new Vue({
 	el: '#app',
 	data: {
+		init: [],
 		puzzles: [],
 		goal: [],
-		num: 9
+		num: 9,
+		path: [],
+		count: 0,
+		score: 0
 	},
 	computed:{
 		coordinate:function(){
@@ -90,6 +95,7 @@ var app = new Vue({
 			pos = locateTile(this.coordinate, item);
 			row = pos[0];
 			col = pos[1];
+			this.score++;
 			//detect up
 			if(row>0 && this.coordinate[row-1][col]===0){
 				exchangeTile(this.puzzles,this.goal,side,[row,col],[row-1,col]);
@@ -114,34 +120,18 @@ var app = new Vue({
 		create:function(){
 			this.$emit('init-game');
 		},
+		reset:function(){
+			this.puzzles = this.init.clone();
+			this.score = 0;
+		},
 		solve:function(){
-			var blank = locateTile(this.coordinate,0);
-			var init = new Node(0, this.coordinate, blank[0], blank[1], 0);
-			
-			var goal = coord(this.goal);
-			blank = locateTile(goal,0);
-			goal = new Node(0, goal, blank[0], blank[1], 0);
-
-			var astar = new AStar(init, goal, 0);
-			// To measure time taken by the algorithm
-			var startTime = new Date();
-			// Execute AStar
-			var result = astar.execute();
-			// To measure time taken by the algorithm
-			var endTime = new Date();
-			alert('Completed in: ' + (endTime - startTime) + ' milliseconds');
-
-			console.dir(result);
-
-			var path = result.path.split('');
-
-			this.$emit('run',path);
+			this.$emit('run',this.path);
 		}
 	},
 	events:{
 		'init-game':function(){
 			var init=[],
-			goal=[];
+				goal=[];
 			for(var i=0;i<this.num-1;i++){
 				goal[i]=i+1;
 			}
@@ -165,8 +155,32 @@ var app = new Vue({
 			
 			goal[this.num-1]=0;
 			init[this.num-1]=0;
-			this.puzzles = init;
-			this.goal = goal;
+			this.puzzles = init.clone();
+			this.init = init.clone();
+			this.goal = goal;		
+
+			var blank = locateTile(this.coordinate,0);
+			var init = new Node(0, this.coordinate, blank[0], blank[1], 0);
+			
+			var goal = coord(this.goal);
+			blank = locateTile(goal,0);
+			goal = new Node(0, goal, blank[0], blank[1], 0);
+
+			var astar = new AStar(init, goal, 0);
+
+			var startTime = new Date();
+
+			var result = astar.execute();
+
+			var endTime = new Date();
+
+			console.dir(result);
+
+			this.path = result.path.split('');
+
+			this.count = this.path.length;
+
+			this.score = 0;
 		},
 		'run':function(path){
 			console.log(path);
